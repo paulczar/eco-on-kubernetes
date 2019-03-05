@@ -7,10 +7,18 @@ metadata:
     helm.sh/chart: {{ include "eco.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
+  annotations:
+  {{- if  .Values.service.DNS }}
+    external-dns.alpha.kubernetes.io/hostname: {{ .Values.service.DNS }}
+  {{- end }}
+  {{- with .Values.service.annotations }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+
 spec:
   type: {{ .Values.service.type }}
   ports:
-    - port: {{ .Values.service.port }}
+    - port: {{ .Values.service.gamePort }}
       targetPort: game
       protocol: UDP
       name: game
